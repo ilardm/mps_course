@@ -2,11 +2,11 @@
 
 .global main
 main:
-	push	{ip,lr}
+        push    {ip,lr}
 
-	@real code here
+        @ actual code here
 
-	mov	r0,#0
-	pop	{ip,pc}
+        mov     r0,#0
+        pop     {ip,pc}
 
 .end
