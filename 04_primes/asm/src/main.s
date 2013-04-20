@@ -26,14 +26,14 @@ get_sieve_bb:
         stmfd   sp!,{r4-r11,lr}
 
         mov     r1,#0
-gsbb_01:        
+gsbb_01:
         cmp     r0,#bipv
         subgt   r0,#bipv
         addgt   r1,#1
         bgt     gsbb_01
 
         ldmfd   sp!,{r4-r11,pc}
-        
+
         /**********************************************************************
         * args:
         * r0    start address
@@ -96,7 +96,60 @@ set_sieve_v:
 main:
         stmfd   sp!,{r4-r11,lr}
 
-        @ do smth
+        @ fill the sieve
+
+        mov     r4,#fprime
+
+outer_loop:
+        ldr     r0,=sieve
+        mov     r1,r4
+        bl      get_sieve_v
+
+        cmp     r0,#prime
+        bne     not_prime
+
+        mul     r5,r4,r4
+
+inner_loop:
+        ldr     r0,=sieve
+        mov     r1,r5
+        mov     r2,#composite
+        bl      set_sieve_v
+
+        cmp     r5,#nlimit
+        addlt   r5,r5,r4
+        blt     inner_loop
+
+not_prime:
+        cmp     r4,#nlimit
+        addlt   r4,#1
+        blt     outer_loop
+
+        @ fill primes array
+
+        mov     r4,#fprime              @ i
+        mov     r5,#0                   @ count
+        ldr     r6,=prim
+
+next_try:
+        ldr     r0,=sieve
+        mov     r1,r4
+        bl      get_sieve_v
+
+        cmp     r0,#prime
+
+        streq   r4,[r6],#bypv
+        addeq   r5,r5,#1
+
+        cmp     r5,#primn
+        bge     done_try
+
+        add     r4,r4,#1
+        cmp     r4,#nlimit
+        bge     done_try
+
+done_try:
+        ldr     r6,=prim
 
         mov     r0,#0
         ldmfd   sp!,{r4-r11,pc}
