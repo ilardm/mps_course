@@ -9,29 +9,12 @@
         .set    composite,1
 
 prim:   .size   prim,primn*bypv
+        .fill   primn,bypv,0
 sieve:  .size   sieve,sievesz*bypv
+        .fill   sievesz,bypv,0
 
 .text
         bal     main
-
-        /**********************************************************************
-        * args:
-        * r0    start address
-        * r1    number of bytes
-        */
-memzero:
-        stmfd   sp!,{r4-r11,lr}
-
-        mov     r4,r1
-        mov     r5,#0
-
-mmz:
-        str     r5,[r0],#bypv
-        sub     r4,r4,#1
-        cmp     r4,#0
-        bgt     mmz
-
-        ldmfd   sp!,{r4-r11,pc}
 
         /**********************************************************************
         * args:
@@ -116,15 +99,6 @@ set_sieve_v:
 .global main
 main:
         stmfd   sp!,{r4-r11,lr}
-
-        @ zero arrays
-        ldr     r0,=sieve
-        mov     r1,#sievesz
-        bl      memzero
-
-        ldr     r0,=prim
-        mov     r1,#primn
-        bl      memzero
 
         @ fill the sieve
         mov     r4,#fprime
