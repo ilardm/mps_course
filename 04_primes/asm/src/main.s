@@ -1,5 +1,5 @@
 .data
-        .set    bipv,32
+        .set    bipv,31
         .set    bypv,4
         .set    primn,10
         .set    fprime,2
@@ -44,12 +44,14 @@ mmz:
 get_sieve_bb:
         stmfd   sp!,{r4-r11,lr}
 
-        mov     r1,#0
+        mov     r4,#0
 gsbb_01:
         cmp     r0,#bipv
         subgt   r0,#bipv
-        addgt   r1,#1
+        addgt   r4,#1
         bgt     gsbb_01
+
+        mov     r1,r4,lsl #2
 
         ldmfd   sp!,{r4-r11,pc}
 
