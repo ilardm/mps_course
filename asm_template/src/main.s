@@ -1,12 +1,12 @@
 .text
+        bal     main
 
 .global main
 main:
-        push    {ip,lr}
+        stmfd   sp!,{r4-r11,lr}
 
         @ actual code here
 
         mov     r0,#0
-        pop     {ip,pc}
-
+        ldmfd   sp!,{r4-r11,pc}
 .end
