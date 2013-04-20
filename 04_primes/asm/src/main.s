@@ -148,7 +148,7 @@ next_try:
 
         add     r4,r4,#1
         cmp     r4,#nlimit
-        bge     done_try
+        blt     next_try
 
 done_try:
         ldr     r6,=prim
