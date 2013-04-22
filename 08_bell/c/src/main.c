@@ -28,7 +28,7 @@ int stirling(int n, int k)
         return 1;
 
     if (   (n > 0 && k == 0)
-        || (k == 0 && k > 0)
+        || (n == 0 && k > 0)
         )
         return 0;
 
