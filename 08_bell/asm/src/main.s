@@ -29,19 +29,19 @@ stirling:
         movge   r0,#1
         bge     stirl_done
 
-stirl_zero_c1:  
+stirl_zero_c1:
         cmp     r4,#0
         ble     stirl_zero_c2
         cmp     r5,#0
         beq     stirl_zero
 
-stirl_zero_c2:  
+stirl_zero_c2:
         cmp     r5,#0
         bne     stirl_recur
         cmp     r4,#0
         bgt     stirl_zero
 
-stirl_recur:    
+stirl_recur:
         cmp     r5,#0
         ble     stirl_done                      @ undef.behav. actually
         cmp     r5,r4
@@ -67,7 +67,7 @@ stirl_recur:
 stirl_zero:
         mov     r0,#0
 
-stirl_done:     
+stirl_done:
 
         ldmfd   sp!,{r4-r11,pc}
 
@@ -75,7 +75,30 @@ stirl_done:
 main:
         stmfd   sp!,{r4-r11,lr}
 
-        @ actual code here
+        ldr     r4,=bell
+        mov     r5,#0                   @ i
+
+loop:
+        mov     r6,#0                   @ bn
+        mov     r7,#0                   @ m
+
+loop_inner:
+        mov     r0,r5
+        mov     r1,r7
+        bl      stirling
+        add     r6,r6,r0
+
+        add     r7,r7,#1
+        cmp     r7,r5
+        ble     loop_inner
+
+        str     r6,[r4],#4
+        add     r5,r5,#1
+        cmp     r5,#belln
+        blt     loop
+
+done:
+        ldr     r4,=bell
 
         mov     r0,#0
         ldmfd   sp!,{r4-r11,pc}
