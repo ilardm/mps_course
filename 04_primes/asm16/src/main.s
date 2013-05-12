@@ -31,11 +31,14 @@ get_sieve_bb:
         mov     r4,#0
 gsbb_01:
         cmp     r0,#bipv
-        subgt   r0,#bipv
-        addgt   r4,#1
-        bgt     gsbb_01
+        ble     gsbb_02
 
-        mov     r1,r4,lsl #2
+        sub     r0,#bipv
+        add     r4,#1
+        b       gsbb_01
+
+gsbb_02:
+        lsl     r1,r4,#2
 
         pop     {r4-r7,pc}
 
@@ -52,7 +55,6 @@ get_sieve_v:
 
         @ save args
         mov     r4,r0
-        mov     r5,r1
 
         @ evaluate bit && byte numbers
         mov     r0,r1
@@ -60,8 +62,10 @@ get_sieve_v:
 
         @ evlauate bit value
         ldr     r6,[r4,r1]
-        mov     r6,r6,lsr r0
-        and     r0,r6,#0x01
+        lsr     r6,r0
+        mov     r5,#0x01
+        and     r6,r5
+        mov     r0,r6
 
         pop     {r4-r7,pc}
 
@@ -85,12 +89,13 @@ set_sieve_v:
 
         @ construct mask
         mov     r7,#1
-        mov     r7,r7, lsl r0
+        lsl     r7,r0
 
         @ apply mask
-        ldr     r8,[r4,r1]
-        orr     r8,r8,r7
-        str     r8,[r4,r1]
+        @ r0 is not used at this point
+        ldr     r0,[r4,r1]
+        orr     r0,r0,r7
+        str     r0,[r4,r1]
 
         pop     {r4-r7,pc}
 
@@ -113,7 +118,8 @@ outer_loop:
         cmp     r0,#prime
         bne     not_prime
 
-        mul     r5,r4,r4
+        mov     r5,r4
+        mul     r5,r5
 
 inner_loop:
         ldr     r0,=sieve
@@ -122,14 +128,17 @@ inner_loop:
         bl      set_sieve_v
 
         cmp     r5,#nlimit
-        addlt   r5,r5,r4
-        blt     inner_loop
+        bge     not_prime
+        add     r5,r5,r4
+        b       inner_loop
 
 not_prime:
         cmp     r4,#nlimit
-        addlt   r4,#1
-        blt     outer_loop
+        bge     main_01
+        add     r4,#1
+        b       outer_loop
 
+main_01:
         @ fill primes array
         mov     r4,#fprime              @ i
         mov     r5,#0                   @ count
@@ -141,10 +150,13 @@ next_try:
         bl      get_sieve_v
 
         cmp     r0,#prime
+        bne     main_02
 
-        streq   r4,[r6],#bypv
-        addeq   r5,r5,#1
+        str     r4,[r6,#0]
+        add     r6,r6,#bypv
+        add     r5,r5,#1
 
+main_02:
         cmp     r5,#primn
         bge     done_try
 
