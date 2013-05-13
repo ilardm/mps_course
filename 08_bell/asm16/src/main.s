@@ -23,12 +23,12 @@ stirling:
         mov     r4,r0
         mov     r5,r1
 
-        @ FIXME: bne
         cmp     r4,r5
         bne     stirl_zero_c1
         cmp     r4,#0
-        movge   r0,#1
-        bge     stirl_done
+        blt     stirl_zero_c1
+        mov     r0,#1
+        b       stirl_done
 
 stirl_zero_c1:
         cmp     r4,#0
@@ -61,7 +61,8 @@ stirl_recur:
         bl      stirling
         mov     r7,r0
 
-        mul     r0,r5,r7
+        mov     r0,r5
+        mul     r0,r7
         add     r0,r6
         b       stirl_done
 
@@ -97,7 +98,8 @@ loop_inner:
         cmp     r7,r5
         ble     loop_inner
 
-        str     r6,[r4],#4
+        str     r6,[r4,#0]
+        add     r4,#bypv
         add     r5,r5,#1
         cmp     r5,#belln
         blt     loop
