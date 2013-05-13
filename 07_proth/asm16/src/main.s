@@ -19,19 +19,23 @@ main:
         mov     r5,#0                   @ i
         mov     r6,#0                   @ count
         mov     r7,#0                   @ j
-        mov     r10,#k
+        mov     r0,#k
 
 loop:
-        add     r8,r5,#1
+        add     r1,r5,#1
         mov     r7,#1
-        mov     r7,r7,lsl r8
+        lsl     r7,r1
 
-        cmp     r10,r7                  
-        mullt   r9,r10,r7               @ pn
-        addlt   r9,r9,#1
-        strlt   r9,[r4],#4
-        addlt   r6,r6,#1
+        cmp     r0,r7
+        bge     main_01
+        mov     r2,r0                   @ pn
+        mul     r2,r7
+        add     r2,r2,#1
+        str     r2,[r4,#0]
+        add     r4,#bypv
+        add     r6,r6,#1
 
+main_01:
         add     r5,r5,#1
 
         cmp     r6,#prothn
@@ -39,7 +43,7 @@ loop:
 
 done:
         ldr     r4,=proth
-        
+
         mov     r0,#0
         pop     {r4-r7,pc}
 
