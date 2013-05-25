@@ -1,10 +1,12 @@
 .section .data
         .equ    fibn,10                 @ length of Fib. sequence
+        .equ    fibsz,40                @ size of Fib. array (fibn*4 bytes)
 
 .section .bss
         .lcomm  fib,40                  @ array for Fib. seq. (fibn*4 bytes)
 
 .section .text
+        bal     main
 
 /** First 10 Fibonacci numbers generation
  *
@@ -17,14 +19,12 @@
 
         .global main
 main:
-        push    {ip,lr}
+        push    {r4-r11,lr}
 
         @ calculate end address of fin array
-        mov     r0,#fibn                @ load length of Fib. seq.
-        mov     r1,#4                   @ 32bit arch => 4bytes / value
-        mul     r4,r0,r1                @ evaluate consumed memory
         ldr     r0,=fib                 @ load Fib. array start address
-        add     r4,r4,r0                @ evaluate end address
+        mov     r4,r0
+        add     r4,r4,#fibsz            @ evaluate end address
 
         @ initialize first two numbers
         mov     r1,#0
@@ -39,7 +39,10 @@ loop:
         cmp     r0,r4                   @ check if ptr. >= end address
         blt     loop                    @ repeat loop if not
 
+done:
+        ldr     r0,=fib
+
         mov     r0,#0                   @ return 0 ;
-        pop     {ip,pc}
+        pop     {r4-r11,pc}
 
 .end
